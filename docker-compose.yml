@@ -1,0 +1,28 @@
+version: '3'
+services:
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+    entrypoint: redis-server --appendonly yes
+    restart: always
+  web:
+    build: ./api
+    ports:
+     - "5000:5000"
+    depends_on:
+     - redis
+    restart: always
+  crawler:
+    build: ./crawler
+    depends_on:
+      - redis
+    restart: always
+  torproxy:
+    image: "znetstar/tor-router"
+    ports:
+      - "10000:10000"
+    entrypoint: "tor-router -j 30 -h 10000"
+    restart: always
