@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM tiangolo/uwsgi-nginx-flask:python3.6
 
 # Create app directory
 WORKDIR /app
@@ -10,6 +10,3 @@ RUN pip install -r requirements.txt
 
 # Bundle app source
 COPY src /app
-
-EXPOSE 5000
-CMD [ "python", "app.py"]

@@ -27,12 +27,21 @@ def main():
     headers_list = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
                     "(KHTML, like Gecko)Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134",
                     "Mozilla/5.0 (Windows NT 6.1; Win64; rv:59.0) Gecko/20100101 Firefox/59.0",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; rv:60.0) Gecko/20100101 Firefox/60.0"]
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; rv:60.0) Gecko/20100101 Firefox/60.0",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, " +
+                    "like Gecko) Chrome/67.0.3396.99 Safari/537.36",
+                    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, " +
+                    "like Gecko) Chrome/67.0.3396.99 Safari/537.36",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0",
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 "+
+                    "(KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 "+
+                    "(KHTML, like Gecko) Version/11.1.2 Safari/605.1.15"]
     proxies_list = ["torproxy:10000"] # HTTPS proxies
 
     for i in usernames_list:
         scheduler.add_job(crawl_username_job, 'interval',
-                          args=[i, headers_list, proxies_list, redis_db], seconds=3,
+                          args=[i, headers_list, proxies_list, redis_db], seconds=12,
                           timezone="Europe/Paris", max_instances=20000)
         time.sleep(2/len(usernames_list))
 
@@ -45,7 +54,7 @@ def main():
             usernames_list = get_usernames(redis_db, "usernames")
             for i in usernames_list:
                 scheduler.add_job(crawl_username_job, 'interval',
-                                  args=[i, headers_list, proxies_list, redis_db], seconds=3,
+                                  args=[i, headers_list, proxies_list, redis_db], seconds=12,
                                   timezone="Europe/Paris", max_instances=20000)
                 time.sleep(2/len(usernames_list))
 

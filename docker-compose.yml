@@ -1,5 +1,11 @@
 version: '3'
 services:
+  torproxy:
+    image: "znetstar/tor-router"
+    ports:
+      - "10000:10000"
+    entrypoint: "tor-router -j 30 -h 10000"
+    restart: always
   redis:
     image: "redis:alpine"
     ports:
@@ -11,7 +17,7 @@ services:
   web:
     build: ./api
     ports:
-     - "5000:5000"
+     - "80:80"
     depends_on:
      - redis
     restart: always
@@ -19,10 +25,5 @@ services:
     build: ./crawler
     depends_on:
       - redis
-    restart: always
-  torproxy:
-    image: "znetstar/tor-router"
-    ports:
-      - "10000:10000"
-    entrypoint: "tor-router -j 30 -h 10000"
+      - torproxy
     restart: always
