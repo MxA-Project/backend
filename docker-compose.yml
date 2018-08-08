@@ -2,7 +2,7 @@ version: '3'
 services:
   reverse-proxy:
     image: traefik # The official Traefik docker image
-    command: --docker # Enables the web UI and tells Træfik to listen to docker
+    command: --docker # Tells Træfik to listen to docker
     ports:
       - "80:80"     # The HTTP port
     volumes:
