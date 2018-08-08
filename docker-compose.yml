@@ -1,11 +1,20 @@
 version: '3'
 services:
+  reverse-proxy:
+    image: traefik # The official Traefik docker image
+    command: --docker # Enables the web UI and tells Træfik to listen to docker
+    ports:
+      - "80:80"     # The HTTP port
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
   torproxy:
     image: "znetstar/tor-router"
     ports:
       - "10000:10000"
     entrypoint: "tor-router -j 30 -h 10000"
     restart: always
+    labels:
+      - "traefik.enable=false"
   redis:
     image: "redis:alpine"
     ports:
@@ -14,16 +23,23 @@ services:
       - ./data/redis:/data
     entrypoint: redis-server --appendonly yes
     restart: always
+    labels:
+      - "traefik.enable=false"
   web:
     build: ./api
-    ports:
-     - "80:80"
     depends_on:
      - redis
     restart: always
+    labels:
+      - "traefik.frontend.rule=Host:api.server9120.ovh"
+      - "traefik.backend=restapi"
+      - "traefik.enable=true"
+      - "traefik.port=80"
   crawler:
     build: ./crawler
     depends_on:
       - redis
       - torproxy
     restart: always
+    labels:
+      - "traefik.enable=false"
