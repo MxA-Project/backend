@@ -8,25 +8,25 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
   torproxy:
-    image: "znetstar/tor-router"
+    image: "znetstar/tor-router" # The tor-proxy service image
     ports:
-      - "10000:10000"
-    entrypoint: "tor-router -j 30 -h 10000"
+      - "10000:10000" # The proxy listening service port
+    entrypoint: "tor-router -j 30 -h 10000" # Start 30 instances on HTTP port 10000
     restart: always
     labels:
       - "traefik.enable=false"
   redis:
-    image: "redis:alpine"
+    image: "redis:alpine" # The official redis image
     ports:
-      - "6379:6379"
+      - "6379:6379" 
     volumes:
-      - ./data/redis:/data
-    entrypoint: redis-server --appendonly yes
+      - ./data/redis:/data # Where's data to save it when shutdown and reboot the instance
+    entrypoint: redis-server --appendonly yes # Set up persistance
     restart: always
     labels:
       - "traefik.enable=false"
   web:
-    build: ./api
+    build: ./api # The flask api 
     depends_on:
      - redis
     restart: always
@@ -36,7 +36,7 @@ services:
       - "traefik.enable=true"
       - "traefik.port=80"
   crawler:
-    build: ./crawler
+    build: ./crawler # The crawler 
     depends_on:
       - redis
       - torproxy
