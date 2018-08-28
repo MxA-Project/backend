@@ -8,11 +8,13 @@ import requests
 import redis # and redis depend optionnaly on hiredis for performances (see github)
 from apscheduler.schedulers.background import BackgroundScheduler
 
+ip_redis = 'redis' # ip
+ip_torproxy = 'torproxy:10000' # ip:port
 
 def main():
     """Main function"""
     # Connect to RedisDB
-    redis_db = redis.StrictRedis(host='redis', port=6379, db=0)
+    redis_db = redis.StrictRedis(host=ip_redis, port=6379, db=0)
     # Initialize scheduler
     scheduler = BackgroundScheduler()
     scheduler.start()
@@ -37,7 +39,7 @@ def main():
                     "(KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
                     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 "+
                     "(KHTML, like Gecko) Version/11.1.2 Safari/605.1.15"]
-    proxies_list = ["torproxy:10000"] # HTTPS proxies
+    proxies_list = [ip_torproxy] # HTTPS proxies
 
     for i in usernames_list:
         scheduler.add_job(crawl_username_job, 'interval',
@@ -56,6 +58,7 @@ def main():
                 scheduler.add_job(crawl_username_job, 'interval',
                                   args=[i, headers_list, proxies_list, redis_db], seconds=12,
                                   timezone="Europe/Paris", max_instances=20000)
+                print("added job for " + i)
                 time.sleep(2/len(usernames_list))
 
     except (KeyboardInterrupt, SystemExit):
