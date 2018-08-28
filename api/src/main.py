@@ -2,8 +2,9 @@ from flask import Flask
 import redis
 app = Flask(__name__)
 
+ip_redis = 'redis'
 # Connect to RedisDB
-redis_db = redis.StrictRedis(host='redis', port=6379, db=0)
+redis_db = redis.StrictRedis(host=ip_redis, port=6379, db=0)
 
 
 def get_followers_count(token):
@@ -14,7 +15,7 @@ def get_followers_count(token):
         # Get the followers count corresponding to the username
         followers_count = redis_db.hget(username, "followcount")
         if(followers_count):
-            return followers_count
+            return followers_count, 200
         return "failed to get your followers count", 503
     return "wrong token", 403
 
